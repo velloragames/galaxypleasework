@@ -1,0 +1,2779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Galaxy Games - Redesign</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top left, #111827, #020617 55%, #000000);
+      --bg-panel: rgba(15,23,42,0.96);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.18);
+      --accent-2: #a855f7;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(148,163,184,0.3);
+      --radius-lg: 18px;
+      --shadow-soft: 0 24px 80px rgba(15,23,42,0.9);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      color: var(--text-main);
+      background: var(--bg);
+      background-attachment: fixed;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr);
+      max-width: 1200px;
+      width: 100%;
+      height: 100vh;
+      padding: 18px;
+      gap: 18px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: rgba(15,23,42,0.96);
+      border-radius: 24px;
+      border: 1px solid rgba(15,23,42,0.9);
+      box-shadow: var(--shadow-soft);
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #38bdf8, #0f172a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      font-size: 1rem;
+      box-shadow: 0 10px 30px rgba(56,189,248,0.35);
+    }
+
+    .side-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .side-nav button {
+      all: unset;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      transition: all 0.18s ease;
+    }
+
+    .side-nav button:hover {
+      background: rgba(15,23,42,0.9);
+      color: var(--text-main);
+    }
+
+    .side-nav button.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1120;
+      box-shadow: 0 10px 35px rgba(56,189,248,0.4);
+    }
+
+    .side-clock {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: grid;
+      gap: 2px;
+    }
+
+    .side-clock-time {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    /* Main area */
+    .main {
+      background: var(--bg-panel);
+      border-radius: 24px;
+      border: 1px solid rgba(15,23,42,0.9);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      overflow: hidden;
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-block {
+      display: grid;
+      gap: 4px;
+    }
+
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 0.75rem;
+    }
+
+    .pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-muted);
+    }
+
+    /* Top tab row */
+    .top-tabs {
+      display: inline-flex;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(15,23,42,0.9);
+    }
+
+    .top-tabs button {
+      all: unset;
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: all 0.16s;
+    }
+
+    .top-tabs button.active {
+      background: radial-gradient(circle at top left, var(--accent), var(--accent-2));
+      color: #020617;
+      box-shadow: 0 10px 25px rgba(56,189,248,0.45);
+      font-weight: 600;
+    }
+
+    /* Panels */
+    .panel-shell {
+      flex: 1;
+      border-radius: 18px;
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.95), #020617);
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tab-panel {
+      display: none;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .tab-panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Home panel */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .hero-title span.accent {
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 380px;
+    }
+
+    .hero-actions {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-primary {
+      padding: 0.7rem 1.4rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: radial-gradient(circle at top left, var(--accent), var(--accent-2));
+      color: #020617;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 12px 30px rgba(56,189,248,0.45);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      padding: 0.6rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .hero-card {
+      border-radius: 20px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,64,175,0.9));
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-card-thumb {
+      border-radius: 14px;
+      background-image: url('https://images.pexels.com/photos/39501/lamborghini-brno-racing-car-automobiles-39501.jpeg?auto=compress&cs=tinysrgb&w=1200');
+      background-size: cover;
+      background-position: center;
+      height: 150px;
+    }
+
+    .hero-card-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .hero-card-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Games panel */
+    .games-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .games-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .search-bar {
+      position: relative;
+      width: 260px;
+      max-width: 100%;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.6rem 2rem 0.6rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.85);
+      color: var(--text-main);
+      font-size: 0.85rem;
+    }
+
+    .search-bar span {
+      position: absolute;
+      right: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .game-list {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .game-card {
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(15,23,42,0.9);
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+    }
+
+    .game-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 35px rgba(15,23,42,0.9);
+      border-color: var(--accent-soft);
+    }
+
+    .game-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .game-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(31,41,55,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .game-body {
+      display: grid;
+      gap: 2px;
+    }
+
+    .game-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .game-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .game-thumb {
+      border-radius: 12px;
+      height: 96px;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(15,23,42,0.9);
+    }
+
+    .game-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .game-button {
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #020617;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .game-button:hover {
+      filter: brightness(1.05);
+    }
+
+    /* Soundboard panel */
+    .soundboard-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .soundboard-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      min-height: 1em;
+      margin-top: 6px;
+    }
+
+    .soundboard-grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .sound-pad {
+      border-radius: 14px;
+      padding: 10px;
+      border: 1px solid rgba(148,163,184,0.3);
+      background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+      cursor: pointer;
+      display: grid;
+      gap: 4px;
+    }
+
+    .sound-pad .tag {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .sound-pad .title {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .sound-pad .hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .sound-pad.playing {
+      box-shadow: 0 0 0 1px var(--accent-soft), 0 0 20px rgba(56,189,248,0.4);
+    }
+
+    /* About panel */
+    .about-text {
+      max-width: 520px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      .app-shell {
+        grid-template-columns: 64px minmax(0, 1fr);
+        padding: 10px;
+      }
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .main {
+        padding: 14px;
+      }
+      .panel-shell {
+        padding: 14px;
+      }
+    }
+  
+    /* === Futuristic Glow Enhancements === */
+
+    .game-thumb {
+      display: none !important;
+    }
+
+    .game-card {
+      background: linear-gradient(180deg, rgba(15,23,42,0.95), rgba(2,6,23,0.98));
+      border: 1px solid rgba(56,189,248,0.35);
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,0.15),
+        0 0 25px rgba(56,189,248,0.18),
+        inset 0 0 20px rgba(168,85,247,0.08);
+      position: relative;
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 18px;
+      background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(56,189,248,0.35),
+        rgba(168,85,247,0.35),
+        transparent 80%
+      );
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .game-card:hover::before {
+      opacity: 1;
+    }
+
+    .game-card:hover {
+      transform: translateY(-4px) scale(1.015);
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,0.35),
+        0 0 45px rgba(56,189,248,0.45),
+        0 0 80px rgba(168,85,247,0.35);
+    }
+
+    .game-icon {
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,0.35),
+        0 0 16px rgba(56,189,248,0.45);
+    }
+
+    .game-button {
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,0.4),
+        0 0 18px rgba(56,189,248,0.55);
+    }
+
+    .game-button:hover {
+      box-shadow:
+        0 0 0 1px rgba(56,189,248,0.6),
+        0 0 28px rgba(168,85,247,0.65);
+    }
+
+/* === CLEANER UI PASS === */
+.game-card {
+  background: rgba(15,23,42,0.55) !important;
+  border: 1px solid rgba(148,163,184,0.18) !important;
+  box-shadow: 0 8px 22px rgba(2,6,23,0.45) !important;
+}
+.game-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 34px rgba(2,6,23,0.55) !important;
+}
+.game-card::before { display: none !important; }
+
+.game-button {
+  box-shadow: none !important;
+}
+
+.panel-shell {
+  background: rgba(2,6,23,0.55) !important;
+}
+
+.top-tabs button.active {
+  box-shadow: 0 6px 16px rgba(96,165,250,0.25) !important;
+}
+
+    /* Music tab */
+    .music-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 16px;
+      align-items: center;
+    }
+
+    .music-hero h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+    }
+
+    .music-hero p {
+      margin: 6px 0 0 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 520px;
+    }
+
+    .music-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .music-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.78);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+
+    .music-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .music-card {
+      border: 1px solid rgba(148,163,184,0.22);
+      border-radius: 14px;
+      background: rgba(15,23,42,0.9);
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+      box-shadow: 0 10px 26px rgba(2,6,23,0.55);
+    }
+
+    .music-card-header {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .music-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.28), rgba(168,85,247,0.28));
+      border: 1px solid rgba(148,163,184,0.3);
+      flex: 0 0 auto;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .music-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .music-meta {
+      min-width: 0;
+    }
+
+    .music-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-artist {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .music-btn {
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.85);
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: background 0.15s ease, transform 0.12s ease;
+    }
+
+    .music-btn:hover {
+      background: rgba(56,189,248,0.1);
+      transform: translateY(-1px);
+    }
+
+    .music-btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #020617;
+      border: none;
+      font-weight: 700;
+    }
+
+    .music-field {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .music-field input {
+      flex: 1;
+      min-width: 220px;
+      padding: 0.65rem 0.9rem;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.85);
+      color: var(--text-main);
+      font-size: 0.9rem;
+    }
+
+    .music-sub {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    .music-empty {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border: 1px dashed rgba(148,163,184,0.3);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 780px) {
+      .music-hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Music social */
+    .music-social-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .music-card.social {
+      gap: 10px;
+    }
+
+    .account-list,
+    .follow-list,
+    .chat-log {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 220px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .account-item,
+    .follow-item,
+    .chat-item {
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(15,23,42,0.85);
+      border-radius: 12px;
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.35);
+      flex: 0 0 auto;
+    }
+    .status-online { background: var(--accent); }
+    .status-offline { background: var(--text-muted); }
+    .status-dnd { background: #ef4444; }
+
+    .account-meta { min-width: 0; flex: 1; }
+    .account-meta strong { display: block; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .account-meta span { display: block; color: var(--text-muted); font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .tiny-btn {
+      border: 1px solid rgba(148,163,184,0.35);
+      background: rgba(15,23,42,0.9);
+      color: var(--text-main);
+      padding: 6px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.78rem;
+    }
+
+    .tiny-btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #020617;
+      border: none;
+      font-weight: 700;
+    }
+
+    .social-form {
+      display: grid;
+      gap: 8px;
+    }
+
+    .social-form input,
+    .social-form select,
+    .social-form textarea {
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(15,23,42,0.85);
+      color: var(--text-main);
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+
+    .chat-log {
+      padding: 8px;
+      border: 1px solid rgba(148,163,184,0.2);
+      border-radius: 12px;
+      background: rgba(2,6,23,0.75);
+    }
+
+    .chat-item {
+      align-items: flex-start;
+    }
+
+    .chat-meta {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .chat-text {
+      font-size: 0.9rem;
+    }
+
+    .creator-inline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+    }
+
+    .account-card {
+      display: grid;
+      gap: 10px;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(148,163,184,0.2);
+      margin: 4px 0;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(56,189,248,0.3), rgba(168,85,247,0.2));
+      border: 1px solid rgba(148,163,184,0.35);
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="logo-circle">GX</div>
+      <nav class="side-nav">
+        <button class="active" data-tab-target="home" title="Home">🏠</button>
+        <button data-tab-target="games" title="Games">🎮</button>
+        <button data-tab-target="soundboard" title="Sound Board">🔊</button>
+        <button data-tab-target="music" title="Music">🎵</button>
+        <button data-tab-target="community" title="Community">🤝</button>
+        <button data-tab-target="create-account" title="Create Account">➕</button>
+        <button data-tab-target="account" title="Account">👤</button>
+        <button data-tab-target="about" title="About">ℹ️</button>
+      </nav>
+      <div class="side-clock">
+        <div id="system-clock-time" class="side-clock-time"></div>
+        <div id="system-clock-date" class="side-clock-date"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="main-header">
+        <div class="brand-block">
+          <div class="brand-title">Galaxy Games</div>
+          <div class="brand-subtitle">Launch unblocked games in a single clean dashboard.</div>
+          <div class="pill-row">
+            <div class="pill">Fast launch</div>
+            <div class="pill">Full-screen overlay</div>
+            <div class="pill">Soundboard ready</div>
+          </div>
+        </div>
+        <div class="top-tabs">
+          <button class="active" data-tab-target="home">🏠 Home</button>
+          <button data-tab-target="games">🎮 Games</button>
+          <button data-tab-target="soundboard">🔊 Sound</button>
+          <button data-tab-target="music">🎵 Music</button>
+          <button data-tab-target="community">🤝 Community</button>
+          <button data-tab-target="create-account">➕ Create</button>
+          <button data-tab-target="account">👤 Account</button>
+          <button data-tab-target="television">📺 TV</button>
+          <button data-tab-target="about">ℹ️ About</button>
+        </div>
+      </div>
+
+      <div class="panel-shell">
+        <!-- Home -->
+        <section class="tab-panel active" data-tab="home">
+          <div class="hero">
+            <div>
+              <div class="hero-title">
+                Welcome to <span class="accent">Galaxy Games</span>
+              </div>
+              <div class="hero-sub">
+                Browse a curated list of web games and launch them in a distraction-free overlay that hides the browser UI.
+              </div>
+              <div class="hero-actions">
+                <button class="btn-primary" id="home-start-btn">Start playing</button>
+                <button class="btn-ghost" data-tab-jump="games">View all games</button>
+              </div>
+            </div>
+            <div class="hero-card">
+              <div class="hero-card-thumb"></div>
+              <div class="hero-card-title">Featured: Lamborghini Sprint</div>
+              <div class="hero-card-meta">
+                <span>Arcade • High score chase</span>
+                <span>Instant load via overlay</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Games -->
+        <section class="tab-panel" data-tab="games">
+          <div class="games-header-row">
+            <div>
+              <div class="games-title">All games</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Search the feed and click any tile to launch.</div>
+            </div>
+            <div class="search-bar">
+              <input id="game-search" type="text" placeholder="Search games..." />
+              <span>🔍</span>
+            </div>
+          </div>
+          <div class="game-list" id="game-list"></div>
+        </section>
+
+        <!-- Soundboard -->
+        <section class="tab-panel" data-tab="soundboard">
+          <div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center;">
+            <div>
+              <div class="games-title">Sound Board</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">
+                Tap a pad for instant arcade sounds, or launch the original soundboard game overlay.
+              </div>
+            </div>
+            <button class="btn-primary" id="launch-soundboard-btn">Launch original board</button>
+          </div>
+          <div id="soundboard-remote-note" class="soundboard-note"></div>
+          <div id="soundboard-status" class="soundboard-status"></div>
+          <div id="soundboard-grid" class="soundboard-grid"></div>
+        </section>
+
+        <!-- Music -->
+        <section class="tab-panel" data-tab="music">
+          <div class="music-hero">
+            <div>
+              <h2>Galaxy Music Hub</h2>
+              <p>
+                Stream quick previews powered by the iTunes API. Monthly picks, social accounts, chat, and fast album drops in one place.
+              </p>
+              <div class="music-pills">
+                <span class="music-pill">iTunes search</span>
+                <span class="music-pill">Preview snippets</span>
+                <span class="music-pill">Monthly spotlight</span>
+                <span class="music-pill">Social + Chat</span>
+              </div>
+            </div>
+            <div class="music-card">
+              <div class="music-card-header">
+                <div class="music-thumb">NOW</div>
+                <div class="music-meta">
+                  <div class="music-title">Monthly Spotlight</div>
+                  <div class="music-artist">Hand-picked drops for this month</div>
+                </div>
+              </div>
+              <div class="music-actions">
+                <button class="music-btn primary" id="music-refresh">Refresh picks</button>
+                <div class="music-sub">Pulls latest art + previews from iTunes.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:12px;">
+              <div class="games-title" style="margin:0;">Monthly songs</div>
+            <div class="music-sub">Dark Thoughts · Montagem Rebola · Ransom · Headshot</div>
+          </div>
+          <div class="music-grid" id="music-monthly"></div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:10px; flex-wrap:wrap;">
+            <div>
+              <div class="games-title" style="margin:0;">Search the catalog</div>
+              <div class="music-sub">Use iTunes search to find more songs.</div>
+            </div>
+          </div>
+          <div class="music-field" style="margin-top:10px;">
+            <input id="music-search" type="text" placeholder="Search iTunes (e.g., Lil Tecca)" />
+            <button class="music-btn primary" id="music-search-btn">Search</button>
+          </div>
+      <div class="music-grid" id="music-results" style="margin-top:12px;"></div>
+      <div class="music-empty" id="music-empty" style="display:none;">No songs yet. Try a search.</div>
+        </section>
+
+        <!-- Create Account -->
+        <section class="tab-panel" data-tab="create-account">
+          <div class="music-hero">
+            <div>
+              <h2>Create Account</h2>
+              <p>Set your name, handle, avatar, and password to join the hub.</p>
+              <div class="music-pills">
+                <span class="music-pill">New profile</span>
+                <span class="music-pill">Avatar ready</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="music-card social account-card" style="max-width:520px;">
+            <form class="social-form" id="authSignupForm">
+              <input id="authSignupName" placeholder="Display name" required />
+              <input id="authSignupHandle" placeholder="Username" required />
+              <input id="authSignupAvatar" placeholder="Avatar image URL (optional)" />
+              <input id="authSignupPassword" type="password" placeholder="Password (required)" required />
+              <button class="tiny-btn primary" type="submit">Create</button>
+            </form>
+            <div class="music-sub" id="authSignupStatus"></div>
+          </div>
+        </section>
+
+        <!-- Community -->
+        <section class="tab-panel" data-tab="community">
+          <div class="music-hero">
+            <div>
+              <h2>Community</h2>
+              <p>Switch accounts, follow friends, chat in a Discord-style log, and drop new albums for the hub.</p>
+              <div class="music-pills">
+                <span class="music-pill">Owner protected (xdrax)</span>
+                <span class="music-pill">Chat & presence</span>
+                <span class="music-pill">Album builder</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="music-social-grid" id="music-social">
+            <div class="music-card social">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div>
+                  <div class="music-title">Social</div>
+                  <div class="music-artist">All users · send/accept friend requests</div>
+                </div>
+                <span class="music-pill" id="followCount">0 friends</span>
+              </div>
+              <div class="follow-list" id="followList"></div>
+            </div>
+
+            <div class="music-card social">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div>
+                  <div class="music-title">Chat</div>
+                  <div class="music-artist">Discord-style vibe (friends only)</div>
+                </div>
+                <span class="music-pill" id="presencePill">Offline</span>
+              </div>
+              <div class="chat-log" id="chatSection" aria-label="Chat log"></div>
+              <div class="music-field">
+                <select id="chatFriend" style="width:100%;">
+                  <option value="">Select a friend to chat</option>
+                </select>
+              </div>
+              <form class="social-form" id="chatForm">
+                <textarea id="chatInput" rows="2" placeholder="Say something..." required></textarea>
+                <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+                  <span class="music-sub">Enter to send • Shift+Enter for newline</span>
+                  <button class="tiny-btn primary" type="submit">Send</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="music-card social">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div>
+                  <div class="music-title">Album builder</div>
+                  <div class="music-artist">Add a quick album & track</div>
+                </div>
+                <span class="music-pill">Instant render</span>
+              </div>
+              <form class="social-form" id="albumForm">
+                <input id="albumName" placeholder="Album title" required />
+                <div class="creator-inline">
+                  <input id="albumArtist" placeholder="Artist" required />
+                  <input id="albumTrackTitle" placeholder="Lead track name" required />
+                </div>
+                <input id="albumArt" placeholder="Cover image URL (optional)" />
+                <button class="tiny-btn primary" type="submit">Create album</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Account -->
+        <section class="tab-panel" data-tab="account">
+          <div class="music-hero">
+            <div>
+              <h2>Your Account</h2>
+              <p>Login, update your profile picture, and view your info.</p>
+              <div class="music-pills">
+                <span class="music-pill">Login/Logout</span>
+                <span class="music-pill">Avatar</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="music-social-grid">
+            <div class="music-card social account-card">
+              <div class="music-title">Login</div>
+              <form class="social-form" id="authLoginForm">
+                <input id="authLoginHandle" placeholder="Username" required />
+                <input id="authLoginPassword" type="password" placeholder="Password" required />
+                <button class="tiny-btn primary" type="submit">Login</button>
+              </form>
+              <div class="music-sub" id="authLoginStatus"></div>
+              <div class="divider"></div>
+              <div class="music-title">Logout</div>
+              <button class="tiny-btn" id="authLogoutBtn">Logout</button>
+            </div>
+
+            <div class="music-card social account-card">
+              <div class="music-title">Profile</div>
+              <div class="account-item">
+                <div class="status-dot" id="accountStatusDot"></div>
+                <div class="avatar" id="accountAvatarPreview"></div>
+                <div class="account-meta">
+                  <strong id="accountNameLabel">—</strong>
+                  <span id="accountHandleLabel">@—</span>
+                </div>
+              </div>
+              <form class="social-form" id="authProfileForm">
+                <input id="authProfileName" placeholder="Display name" />
+                <input id="authProfileAvatar" placeholder="Avatar image URL" />
+                <button class="tiny-btn primary" type="submit">Save profile</button>
+              </form>
+              <div class="music-sub" id="authProfileStatus"></div>
+            </div>
+          </div>
+        </section>
+
+        
+<!-- Television -->
+<section class="tab-panel" data-tab="television">
+  <div class="games-title">Television</div>
+  <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;">
+    Watch curated network content in a clean embedded viewer.
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px;">
+    <div>
+      <div style="font-weight:600;margin-bottom:6px;">Disney</div>
+      <iframe
+        src="https://docs.google.com/presentation/d/1cqMoS7rNvOX77938GusdWNi6mYVPOfETCVsAVW9I9ps/preview?slide=id.g2caa1804f1f_0_71"
+        style="width:100%;height:320px;border-radius:14px;border:1px solid rgba(148,163,184,0.2);"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <div>
+      <div style="font-weight:600;margin-bottom:6px;">Paramount</div>
+      <iframe
+        src="https://docs.google.com/presentation/d/1CiZMdBm677M7EIus7gT89WPxwYPzXJQgwmXGv3sLAaw/preview?slide=id.g1b71f8bdb3c_2_77"
+        style="width:100%;height:320px;border-radius:14px;border:1px solid rgba(148,163,184,0.2);"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</section>
+
+
+        <!-- About -->
+        <section class="tab-panel" data-tab="about">
+          <div class="games-title">About this launcher</div>
+          <div class="about-text">
+            Galaxy Games is a single-page launcher that pulls a public JSON feed of web games and opens them in a full-screen overlay. 
+            Use the sidebar to jump between games, the sound board, and basic info. The entire UI is self-contained in this HTML file,
+            so you can host it anywhere or run it locally.
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Simple tab system for sidebar + top pills
+    (function() {
+      function setActive(tab) {
+        document.querySelectorAll('[data-tab]').forEach(p => {
+          p.classList.toggle('active', p.getAttribute('data-tab') === tab);
+        });
+        document.querySelectorAll('[data-tab-target]').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-tab-target') === tab);
+        });
+      }
+
+      document.addEventListener('click', function(e) {
+        const btn = e.target.closest('[data-tab-target]');
+        if (btn) {
+          const tab = btn.getAttribute('data-tab-target');
+          setActive(tab);
+        }
+        const jump = e.target.closest('[data-tab-jump]');
+        if (jump) {
+          const tab = jump.getAttribute('data-tab-jump');
+          setActive(tab);
+        }
+      });
+
+      const startBtn = document.getElementById('home-start-btn');
+      if (startBtn) {
+        startBtn.addEventListener('click', function() {
+          setActive('games');
+          const search = document.getElementById('game-search');
+          if (search) search.focus();
+        });
+      }
+    })();
+  </script>
+
+  <script>
+  (function() {
+    const ZONES_URL = "https://cdn.jsdelivr.net/gh/Notrexed/assets@latest/allzone.json";
+    const COVER_URL = "https://cdn.jsdelivr.net/gh/Notrexed/covers@main";
+    const HTML_URL  = "https://cdn.jsdelivr.net/gh/Notrexed/html@latest";
+
+    const gameListEl   = document.getElementById("game-list");
+    const searchInput  = document.getElementById("game-search");
+
+    const overlayId    = "game-overlay";
+    const iframeId     = "game-iframe";
+
+    let zones = [];
+    let filtered = [];
+    let soundboardZone = null;
+    let currentZone = null;
+
+    // ---------- Overlay (fullscreen, edge-to-edge iframe) ----------
+    function createOverlayIfNeeded() {
+      if (document.getElementById(overlayId)) return;
+
+      const overlay = document.createElement("div");
+      overlay.id = overlayId;
+      overlay.style.position = "fixed";
+      overlay.style.inset = "0";
+      overlay.style.background = "rgba(0,0,0,0.94)";
+      overlay.style.backdropFilter = "blur(10px)";
+      overlay.style.display = "none";
+      overlay.style.alignItems = "stretch";
+      overlay.style.justifyContent = "center";
+      overlay.style.zIndex = "9999";
+
+      const iframe = document.createElement("iframe");
+      iframe.id = iframeId;
+      iframe.style.border = "none";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.background = "#000";
+
+      const closeBtn = document.createElement("button");
+      closeBtn.textContent = "×";
+      closeBtn.style.position = "fixed";
+      closeBtn.style.top = "18px";
+      closeBtn.style.right = "24px";
+      closeBtn.style.width = "36px";
+      closeBtn.style.height = "36px";
+      closeBtn.style.borderRadius = "999px";
+      closeBtn.style.border = "none";
+      closeBtn.style.background = "rgba(15,23,42,0.85)";
+      closeBtn.style.color = "#e5e7eb";
+      closeBtn.style.fontSize = "22px";
+      closeBtn.style.cursor = "pointer";
+      closeBtn.style.zIndex = "10000";
+
+      closeBtn.addEventListener("click", closeOverlay);
+      iframe.setAttribute("allow", "accelerometer; autoplay; fullscreen; clipboard-read; clipboard-write; gamepad;");
+      iframe.referrerPolicy = "no-referrer";
+      overlay.appendChild(iframe);
+      overlay.appendChild(closeBtn);
+      document.body.appendChild(overlay);
+
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeOverlay();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeOverlay();
+      });
+    }
+
+    function buildZoneHtmlUrl(z) {
+      let u = (z && z.url) ? String(z.url) : "";
+      u = u.replace("{HTML_URL}", HTML_URL).replace("{COVER_URL}", COVER_URL);
+      return u;
+    }
+
+    function buildCoverUrl(z) {
+      let c = (z && z.cover) ? String(z.cover) : "";
+      c = c.replace("{COVER_URL}", COVER_URL).replace("{HTML_URL}", HTML_URL);
+      return c;
+    }
+
+    function openOverlay(zone) {
+      if (!zone) return;
+      currentZone = zone;
+      createOverlayIfNeeded();
+
+      const overlay = document.getElementById(overlayId);
+      const iframe  = document.getElementById(iframeId);
+      if (!overlay || !iframe) return;
+
+      overlay.style.display = "flex";
+      document.body.style.overflow = "hidden";
+
+      const url = buildZoneHtmlUrl(zone);
+
+      // Award XP when a game is launched
+      if (typeof window.earnXpForGame === "function") {
+        window.earnXpForGame(2);
+      }
+
+      // Fetch HTML then doc.write into iframe so scripts run properly
+      fetch(url + "?t=" + Date.now())
+        .then(res => res.text())
+        .then(html => {
+          const doc = iframe.contentWindow.document;
+          doc.open();
+          doc.write(html);
+          doc.close();
+        })
+        .catch(err => {
+          console.error("Failed to load game", err);
+          const doc = iframe.contentWindow.document;
+          doc.open();
+          doc.write(
+            "<body style='margin:0;display:flex;align-items:center;justify-content:center;background:#020617;color:#e5e7eb;font-family:sans-serif;'>Failed to load game.</body>"
+          );
+          doc.close();
+        });
+    }
+
+    function closeOverlay() {
+      const overlay = document.getElementById(overlayId);
+      const iframe  = document.getElementById(iframeId);
+      if (overlay) overlay.style.display = "none";
+      if (iframe && iframe.contentWindow) {
+        try {
+          const doc = iframe.contentWindow.document;
+          doc.open();
+          doc.write("<!doctype html><title></title>");
+          doc.close();
+        } catch (e) {}
+      }
+      document.body.style.overflow = "";
+      currentZone = null;
+    }
+
+    function isSoundboardZone(z) {
+      const name = (z && z.name ? z.name : "").toLowerCase();
+      return name.includes("sound") && name.includes("board");
+    }
+
+    // ---------- Card rendering ----------
+    function renderList(list) {
+      if (!gameListEl) return;
+      gameListEl.innerHTML = "";
+
+      if (!list || list.length === 0) {
+        gameListEl.innerHTML =
+          "<div style='color: var(--text-muted); font-size: 14px;'>No games found.</div>";
+        return;
+      }
+
+      list.forEach(z => {
+        const name = (z && z.name ? z.name : "").toLowerCase();
+        if (name.includes("ovo")) return; // remove all OvO entries
+        if (isSoundboardZone(z)) {
+          soundboardZone = z;
+          return;
+        }
+        if (z.id === -1) return; // skip discord credit row in JSON
+
+        const card = document.createElement("div");
+        card.className = "game-card";
+        card.dataset.title = (z.name || "").toLowerCase();
+
+        const topRow = document.createElement("div");
+        topRow.className = "game-top-row";
+
+        const icon = document.createElement("div");
+        icon.className = "game-icon";
+        const coverUrl = buildCoverUrl(z);
+        if (coverUrl) {
+          icon.style.backgroundImage = `url(${coverUrl})`;
+        } else {
+          icon.textContent = "??";
+        }
+
+        const body = document.createElement("div");
+        body.className = "game-body";
+
+        const title = document.createElement("div");
+        title.className = "game-title";
+        title.textContent = z.name || "Untitled Game";
+
+        const desc = document.createElement("div");
+        desc.className = "game-desc";
+        if (z.author) {
+          desc.textContent = z.author;
+        } else if (z.id !== undefined && z.id !== null) {
+          desc.textContent = "ID " + z.id;
+        } else {
+          desc.textContent = "Click to play";
+        }
+
+        body.appendChild(title);
+        body.appendChild(desc);
+        topRow.appendChild(icon);
+        topRow.appendChild(body);
+
+        const thumb = document.createElement("div");
+        thumb.className = "game-thumb";
+        if (coverUrl) thumb.style.backgroundImage = `url(${coverUrl})`;
+
+        const actions = document.createElement("div");
+        actions.className = "game-actions";
+
+        const btn = document.createElement("button");
+        btn.className = "game-button";
+        btn.textContent = "Play";
+
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openOverlay(z);
+        });
+
+        actions.appendChild(btn);
+        card.appendChild(topRow);
+        card.appendChild(thumb);
+        card.appendChild(actions);
+
+        card.addEventListener("click", () => openOverlay(z));
+
+        gameListEl.appendChild(card);
+      });
+    }
+
+    function applyFilter(query) {
+      const q = (query || "").trim().toLowerCase();
+      const base = zones.filter((z) => !isSoundboardZone(z));
+      filtered = !q
+        ? base
+        : base.filter((z) => (z.name || "").toLowerCase().includes(q));
+      renderList(filtered);
+    }
+
+    async function initGames() {
+      if (!gameListEl) return;
+
+      try {
+        const res = await fetch(ZONES_URL + "?t=" + Date.now());
+        const data = await res.json();
+        zones = Array.isArray(data) ? data : [];
+        soundboardZone = zones.find((z) => isSoundboardZone(z)) || null;
+        filtered = zones.filter((z) => !isSoundboardZone(z));
+        renderList(filtered);
+      } catch (e) {
+        console.error("Failed to load zones", e);
+        gameListEl.innerHTML =
+          "<div style='color: var(--text-muted); font-size: 14px;'>Failed to load games.</div>";
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          applyFilter(e.target.value || "");
+        });
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initGames);
+    } else {
+      initGames();
+    }
+
+    // Expose helpers so the Sound Board tab can launch the original game
+    window.openGameOverlay = openOverlay;
+    window.getSoundboardZone = () => soundboardZone;
+  })();
+</script>
+
+<!-- LocalStorage auth (login/signup/profile) -->
+<script>
+  (function () {
+    const ACCOUNTS_KEY = "gg-local-accounts";
+    const USER_KEY = "gg-local-user";
+    const defaultPic = (username) =>
+      `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(username || "player")}`;
+
+    const loginForm = document.getElementById("authLoginForm");
+    const loginHandle = document.getElementById("authLoginHandle");
+    const loginPassword = document.getElementById("authLoginPassword");
+    const loginStatus = document.getElementById("authLoginStatus");
+
+    const signupForm = document.getElementById("authSignupForm");
+    const signupName = document.getElementById("authSignupName");
+    const signupHandle = document.getElementById("authSignupHandle");
+    const signupAvatar = document.getElementById("authSignupAvatar");
+    const signupPassword = document.getElementById("authSignupPassword");
+    const signupStatus = document.getElementById("authSignupStatus");
+
+    const logoutBtn = document.getElementById("authLogoutBtn");
+    const profileForm = document.getElementById("authProfileForm");
+    const profileName = document.getElementById("authProfileName");
+    const profileAvatar = document.getElementById("authProfileAvatar");
+    const profileStatusMsg = document.getElementById("authProfileStatus");
+
+    const accountStatusDot = document.getElementById("accountStatusDot");
+    const accountAvatarPreview = document.getElementById("accountAvatarPreview");
+    const accountNameLabel = document.getElementById("accountNameLabel");
+    const accountHandleLabel = document.getElementById("accountHandleLabel");
+
+    let currentUser = null;
+
+    function loadAccounts() {
+      try {
+        return JSON.parse(localStorage.getItem(ACCOUNTS_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function saveAccounts(list) {
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(list));
+    }
+
+    function loadUser() {
+      try {
+        return JSON.parse(localStorage.getItem(USER_KEY) || "null");
+      } catch {
+        return null;
+      }
+    }
+
+    function saveUser(user) {
+      if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+      else localStorage.removeItem(USER_KEY);
+      currentUser = user;
+      renderProfile();
+    }
+
+    function showMsg(el, msg, ok = false) {
+      if (!el) return;
+      el.textContent = msg || "";
+      el.style.color = ok ? "var(--accent)" : "var(--text-muted)";
+    }
+
+    function renderProfile() {
+      const user = currentUser;
+      if (accountStatusDot) {
+        accountStatusDot.className = "status-dot " + (user ? "status-online" : "status-offline");
+      }
+      if (accountNameLabel) accountNameLabel.textContent = user?.username || "—";
+      if (accountHandleLabel) accountHandleLabel.textContent = user ? "@" + user.username : "@—";
+      if (accountAvatarPreview) {
+        accountAvatarPreview.innerHTML = user?.profile_pic
+          ? `<img alt="" src="${user.profile_pic}">`
+          : "";
+      }
+      if (profileName) profileName.value = user?.username || "";
+      if (profileAvatar) profileAvatar.value = user?.profile_pic || "";
+    }
+
+    function doLogin(username, password) {
+      username = (username || "").trim();
+      password = (password || "").trim();
+      if (!username || !password) {
+        showMsg(loginStatus, "Enter username and password.");
+        return;
+      }
+      const accounts = loadAccounts();
+      const found = accounts.find((a) => a.username.toLowerCase() === username.toLowerCase());
+      if (!found || found.password !== password) {
+        showMsg(loginStatus, "Invalid username or password.");
+        return;
+      }
+      const user = {
+        id: found.id,
+        username: found.username,
+        profile_pic: found.profile_pic || defaultPic(found.username),
+      };
+      saveUser(user);
+      showMsg(loginStatus, `Logged in as ${user.username}`, true);
+      showMsg(signupStatus, "");
+    }
+
+    function doSignup(name, username, avatar, password) {
+      name = (name || "").trim();
+      username = (username || "").trim();
+      password = (password || "").trim();
+      avatar = (avatar || "").trim();
+      if (!name || !username || !password) {
+        showMsg(signupStatus, "All fields required (avatar optional).");
+        return;
+      }
+      let accounts = loadAccounts();
+      if (accounts.some((a) => a.username.toLowerCase() === username.toLowerCase())) {
+        showMsg(signupStatus, "Username already exists.");
+        return;
+      }
+      const newUser = {
+        id: crypto.randomUUID ? crypto.randomUUID() : "u_" + Math.random().toString(16).slice(2),
+        username,
+        password,
+        profile_pic: avatar || defaultPic(username),
+      };
+      accounts.push(newUser);
+      saveAccounts(accounts);
+      const user = { id: newUser.id, username: newUser.username, profile_pic: newUser.profile_pic };
+      saveUser(user);
+      showMsg(signupStatus, `Account created for ${user.username}`, true);
+      showMsg(loginStatus, "");
+      if (signupForm) signupForm.reset();
+    }
+
+    function doLogout() {
+      saveUser(null);
+      showMsg(loginStatus, "Logged out.");
+    }
+
+    function doProfileSave(name, avatar) {
+      if (!currentUser) {
+        showMsg(profileStatusMsg, "Login first.");
+        return;
+      }
+      const accounts = loadAccounts();
+      const idx = accounts.findIndex((a) => a.id === currentUser.id);
+      if (name) currentUser.username = name.trim();
+      if (avatar) currentUser.profile_pic = avatar.trim();
+      if (idx >= 0) {
+        accounts[idx].username = currentUser.username;
+        accounts[idx].profile_pic = currentUser.profile_pic;
+        saveAccounts(accounts);
+      }
+      saveUser(currentUser);
+      showMsg(profileStatusMsg, "Profile updated.", true);
+    }
+
+    // Bind
+    if (loginForm) {
+      loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        doLogin(loginHandle?.value, loginPassword?.value);
+      });
+    }
+    if (signupForm) {
+      signupForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        doSignup(signupName?.value, signupHandle?.value, signupAvatar?.value, signupPassword?.value);
+      });
+    }
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => doLogout());
+    }
+    if (profileForm) {
+      profileForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        doProfileSave(profileName?.value, profileAvatar?.value);
+      });
+    }
+
+    // Init
+    currentUser = loadUser();
+    renderProfile();
+  })();
+</script>
+
+  <script>
+  (function () {
+    const launchBtn = document.getElementById("launch-soundboard-btn");
+    const remoteNote = document.getElementById("soundboard-remote-note");
+    const pads = [
+      {
+        label: "Laser Sweep",
+        hint: "Sharp arcade zap",
+        tag: "Arcade",
+        tones: [
+          { freq: 760, duration: 0.18, type: "sawtooth" },
+          { freq: 280, duration: 0.22, type: "sawtooth", delay: 0.02 },
+        ],
+      },
+      {
+        label: "Coin Pickup",
+        hint: "Retro reward ping",
+        tag: "Retro",
+        tones: [
+          { freq: 980, duration: 0.12, type: "triangle" },
+          { freq: 1280, duration: 0.16, type: "square", delay: 0.02 },
+        ],
+      },
+      {
+        label: "Air Horn",
+        hint: "Hype blast",
+        tag: "Hype",
+        tones: [{ freq: 220, duration: 0.45, type: "square", peak: 0.55 }],
+      },
+      {
+        label: "Ping",
+        hint: "Chat alert",
+        tag: "Soft",
+        tones: [
+          { freq: 660, duration: 0.12, type: "sine" },
+          { freq: 880, duration: 0.16, type: "triangle", delay: 0.05 },
+        ],
+      },
+      {
+        label: "Power Down",
+        hint: "Descending sci-fi",
+        tag: "Sci-Fi",
+        tones: [
+          { freq: 640, duration: 0.16, type: "triangle" },
+          { freq: 320, duration: 0.22, type: "sine", delay: 0.02 },
+        ],
+      },
+      {
+        label: "Drum Hit",
+        hint: "Kick thump",
+        tag: "Beat",
+        tones: [
+          { freq: 90, duration: 0.24, type: "sine", peak: 0.6 },
+          { freq: 60, duration: 0.14, type: "sine", delay: 0.02, peak: 0.45 },
+        ],
+      },
+    ];
+
+    const grid = document.getElementById("soundboard-grid");
+    const statusEl = document.getElementById("soundboard-status");
+    let audioCtx = null;
+
+    function updateRemoteStatus() {
+      if (!remoteNote) return;
+      const zone = typeof window.getSoundboardZone === "function" ? window.getSoundboardZone() : null;
+      if (zone) {
+        remoteNote.textContent = `Ready: "${zone.name}" is loaded from Games and opens here now.`;
+        remoteNote.style.color = "var(--accent)";
+      } else {
+        remoteNote.textContent = "Looking for the original Sound Board game in the Games feed...";
+        remoteNote.style.color = "var(--text-muted)";
+      }
+    }
+
+    function openRemoteSoundboard() {
+      const zone = typeof window.getSoundboardZone === "function" ? window.getSoundboardZone() : null;
+      if (!zone) {
+        setSoundStatus("Original Sound Board isn't loaded yet.", "#ef4444");
+        return;
+      }
+      if (typeof window.openGameOverlay === "function") {
+        window.openGameOverlay(zone);
+        setSoundStatus("Opening original Sound Board...", "var(--accent)");
+      } else {
+        setSoundStatus("Cannot open overlay right now.", "#ef4444");
+      }
+    }
+
+    function setSoundStatus(msg, color = "var(--text-muted)") {
+      if (!statusEl) return;
+      statusEl.textContent = msg;
+      statusEl.style.color = color;
+      if (msg) {
+        setTimeout(() => {
+          if (statusEl.textContent === msg) statusEl.textContent = "";
+        }, 2200);
+      }
+    }
+
+    function getAudioContext() {
+      if (audioCtx) {
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        return audioCtx;
+      }
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      audioCtx = new Ctx();
+      return audioCtx;
+    }
+
+    function playPad(pad, el) {
+      const ctx = getAudioContext();
+      if (!ctx) {
+        setSoundStatus("Audio not supported in this browser.", "#ef4444");
+        return;
+      }
+
+      let start = ctx.currentTime;
+      pad.tones.forEach((tone) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const duration = tone.duration || 0.2;
+        const delay = tone.delay || 0;
+        const peak = tone.peak || 0.35;
+        osc.type = tone.type || "sine";
+        osc.frequency.setValueAtTime(tone.freq || 440, start);
+        gain.gain.setValueAtTime(0.001, start);
+        gain.gain.exponentialRampToValueAtTime(peak, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + duration + 0.05);
+        start += duration + delay;
+      });
+
+      if (el) {
+        el.classList.add("playing");
+        setTimeout(() => el.classList.remove("playing"), 200);
+      }
+      setSoundStatus(`Playing ${pad.label}`, "var(--accent)");
+    }
+
+    function renderSoundBoard() {
+      if (!grid) return;
+      grid.innerHTML = "";
+      pads.forEach((pad) => {
+        const el = document.createElement("div");
+        el.className = "sound-pad";
+        el.innerHTML = `
+          <div class="tag">${pad.tag}</div>
+          <div class="title">${pad.label}</div>
+          <div class="hint">${pad.hint}</div>
+        `;
+        el.addEventListener("click", () => playPad(pad, el));
+        grid.appendChild(el);
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", renderSoundBoard);
+    } else {
+      renderSoundBoard();
+    }
+
+    updateRemoteStatus();
+    if (launchBtn) launchBtn.addEventListener("click", openRemoteSoundboard);
+    setInterval(updateRemoteStatus, 1500);
+  })();
+</script>
+
+  <script>
+  (function () {
+    const monthlyEl = document.getElementById("music-monthly");
+    const resultsEl = document.getElementById("music-results");
+    const searchInput = document.getElementById("music-search");
+    const searchBtn = document.getElementById("music-search-btn");
+    const refreshBtn = document.getElementById("music-refresh");
+    const emptyEl = document.getElementById("music-empty");
+    const accountList = document.getElementById("accountList");
+    const newAccountForm = document.getElementById("newAccountForm");
+    const accountNameInput = document.getElementById("accountName");
+    const accountHandleInput = document.getElementById("accountHandle");
+    const accountAvatarInput = document.getElementById("accountAvatar");
+    const accountStatusInput = document.getElementById("accountStatus");
+    const accountPasswordInput = document.getElementById("accountPassword");
+    const followList = document.getElementById("followList");
+    const followCount = document.getElementById("followCount");
+    const chatLog = document.getElementById("chatSection");
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+    const chatFriend = document.getElementById("chatFriend");
+    const presencePill = document.getElementById("presencePill");
+    const albumForm = document.getElementById("albumForm");
+    const albumNameInput = document.getElementById("albumName");
+    const albumArtistInput = document.getElementById("albumArtist");
+    const albumTrackInput = document.getElementById("albumTrackTitle");
+    const albumArtInput = document.getElementById("albumArt");
+    const loginForm = document.getElementById("loginForm");
+    const loginHandle = document.getElementById("loginHandle");
+    const loginPassword = document.getElementById("loginPassword");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const profileForm = document.getElementById("profileForm");
+    const profileName = document.getElementById("profileName");
+    const profileAvatar = document.getElementById("profileAvatar");
+    const profileStatus = document.getElementById("profileStatus");
+    const accountStatusDot = document.getElementById("accountStatusDot");
+    const accountAvatarPreview = document.getElementById("accountAvatarPreview");
+    const accountNameLabel = document.getElementById("accountNameLabel");
+    const accountHandleLabel = document.getElementById("accountHandleLabel");
+
+    const MONTHLY_PICKS = [
+      { title: "Dark Thoughts", artist: "Lil Tecca" },
+      { title: "Montagem Rebola", artist: "Unknown" },
+      { title: "Ransom", artist: "Lil Tecca" },
+      { title: "Headshot", artist: "IShowSpeed" },
+    ];
+
+    const audio = new Audio();
+    let currentBtn = null;
+    const defaultAccounts = [
+      { id:"u_xdrax", name:"xdrax", handle:"xdrax", avatar:"https://i.pravatar.cc/120?img=64", status:"online", following:["u_you"], followers:["u_you"], friends:[], pendingSent:[], pendingReceived:[], requiresCode:true, owner:true },
+      { id:"u_you", name:"You", handle:"you", avatar:"https://i.pravatar.cc/120?img=1", status:"online", following:["u_astra"], followers:["u_astra"], friends:["u_astra"], pendingSent:[], pendingReceived:[] },
+      { id:"u_astra", name:"Astra Nova", handle:"astra", avatar:"https://i.pravatar.cc/120?img=12", status:"online", following:["u_kairo"], followers:["u_you"], friends:["u_you"], pendingSent:[], pendingReceived:[] },
+      { id:"u_kairo", name:"Kairo Beam", handle:"kairo", avatar:"https://i.pravatar.cc/120?img=22", status:"dnd", following:["u_echo"], followers:["u_astra"], friends:[], pendingSent:[], pendingReceived:[] },
+      { id:"u_echo", name:"Echo Field", handle:"echo", avatar:"https://i.pravatar.cc/120?img=32", status:"offline", following:[], followers:["u_kairo"], friends:[], pendingSent:[], pendingReceived:[] },
+    ];
+    let accounts = normalizeAccounts(loadJSON("gx_accounts", defaultAccounts));
+    let activeAccountId = loadJSON("gx_active_account", accounts[0]?.id || "u_you");
+    let accountPasswords = loadJSON("gx_account_passwords", {}); // handle -> password
+    let chatMessages = loadJSON("gx_chat", []);
+    const ownerCode = "24423";
+    let ownerUnlocked = !!loadJSON("gx_owner_unlocked", false);
+    const renderBase = ((window.GX_RENDER_BASE || localStorage.getItem("gx_render_base")) || "").replace(/\/$/, "");
+
+    function escapeHTML(s) {
+      return String(s || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function loadJSON(key, fallback) {
+      try {
+        const v = localStorage.getItem(key);
+        if (!v) return fallback;
+        return JSON.parse(v);
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function saveJSON(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+    }
+
+    function initials(title) {
+      return (title || "NW")
+        .split(" ")
+        .map((p) => p.trim()[0] || "")
+        .join("")
+        .slice(0, 2)
+        .toUpperCase();
+    }
+
+    function setBtnState(btn, playing) {
+      if (!btn) return;
+      btn.textContent = playing ? "Playing..." : "Play preview";
+    }
+
+    function bindPreview(btn, track) {
+      if (!btn) return;
+      if (!track.previewUrl) {
+        btn.textContent = "No preview";
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+        return;
+      }
+      btn.addEventListener("click", () => {
+        if (currentBtn && currentBtn !== btn) {
+          setBtnState(currentBtn, false);
+        }
+
+        // Toggle play/pause on same button
+        if (currentBtn === btn && !audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+          setBtnState(btn, false);
+          currentBtn = null;
+          return;
+        }
+
+        audio.src = track.previewUrl;
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+        currentBtn = btn;
+        setBtnState(btn, true);
+      });
+    }
+
+    function renderPresence() {
+      if (!presencePill) return;
+      const me = getActiveAccount();
+      const onlineFlag = me?.status === "online" && navigator.onLine;
+      presencePill.textContent = onlineFlag ? "Online" : (me?.status || "OFFLINE").toUpperCase();
+      presencePill.style.background = onlineFlag ? "rgba(56,189,248,0.18)" : "rgba(148,163,184,0.12)";
+      presencePill.style.color = onlineFlag ? "#38bdf8" : "var(--text-muted)";
+    }
+
+    function setActiveAccount(id) {
+      const acc = getAccount(id);
+      if (!acc) return;
+      if (acc.requiresCode && !ownerUnlocked) {
+        const code = prompt("Owner code required to switch:");
+        if (code !== ownerCode) {
+          alert("Wrong code.");
+          return;
+        }
+        ownerUnlocked = true;
+        saveJSON("gx_owner_unlocked", true);
+      }
+      activeAccountId = acc.id;
+      saveJSON("gx_active_account", activeAccountId);
+      saveJSON("gx_accounts", accounts);
+      renderAccounts();
+      renderFollows();
+      renderPresence();
+      renderChat();
+    }
+
+    function renderAccounts() {
+      if (!accountList) return;
+      const me = getActiveAccount();
+      accountList.innerHTML = "";
+      accounts.forEach(acc => {
+        const item = document.createElement("div");
+        item.className = "account-item";
+        item.innerHTML = `
+          <div class="status-dot ${statusClass(acc.status)}"></div>
+          <div class="avatar">${acc.avatar ? `<img alt="" src="${escapeHTML(acc.avatar)}">` : escapeHTML((acc.name||"NA").slice(0,2).toUpperCase())}</div>
+          <div class="account-meta">
+            <strong>${escapeHTML(acc.name)}</strong>
+            <span>@${escapeHTML(acc.handle)} · ${acc.followers?.length || 0} followers</span>
+          </div>
+        `;
+        const actions = document.createElement("div");
+        actions.style.display = "flex";
+        actions.style.gap = "6px";
+        if (acc.id === me?.id) {
+          const sel = document.createElement("select");
+          sel.className = "tiny-btn";
+          ["online","offline","dnd"].forEach(st => {
+            const opt = document.createElement("option");
+            opt.value = st;
+            opt.textContent = st.toUpperCase();
+            sel.appendChild(opt);
+          });
+          sel.value = acc.status || "online";
+          sel.addEventListener("change", () => {
+            acc.status = sel.value;
+            saveJSON("gx_accounts", accounts);
+            renderPresence();
+            renderChat();
+          });
+          actions.appendChild(sel);
+          const badge = document.createElement("span");
+          badge.className = "music-pill";
+          badge.textContent = acc.owner ? "Owner" : "Active";
+          actions.appendChild(badge);
+        } else {
+          const btn = document.createElement("button");
+          btn.className = "tiny-btn";
+          btn.textContent = "Use";
+          btn.addEventListener("click", () => setActiveAccount(acc.id));
+          actions.appendChild(btn);
+        }
+        item.appendChild(actions);
+        accountList.appendChild(item);
+      });
+    }
+
+    function toggleFollow(targetId) {
+      const me = getActiveAccount();
+      const target = getAccount(targetId);
+      if (!me || !target || me.id === target.id) return;
+      const alreadyFriend = (me.friends || []).includes(target.id);
+      const sent = new Set(me.pendingSent || []);
+      const recv = new Set(target.pendingReceived || []);
+      if (alreadyFriend) return;
+      // send request
+      sent.add(target.id);
+      recv.add(me.id);
+      me.pendingSent = Array.from(sent);
+      target.pendingReceived = Array.from(recv);
+      saveJSON("gx_accounts", accounts);
+      renderFollows();
+    }
+
+    function renderFollows() {
+      if (!followList) return;
+      const me = getActiveAccount();
+      followList.innerHTML = "";
+      const others = accounts.filter(a => a.id !== me?.id);
+      if (!others.length) {
+        followList.innerHTML = `<div class="music-sub">No other accounts yet.</div>`;
+      } else {
+        others.forEach(acc => {
+          const isFriend = (me?.friends || []).includes(acc.id);
+          const sent = (me?.pendingSent || []).includes(acc.id);
+          const recv = (me?.pendingReceived || []).includes(acc.id);
+          const item = document.createElement("div");
+          item.className = "follow-item";
+          item.innerHTML = `
+            <div class="status-dot ${statusClass(acc.status)}"></div>
+            <div class="avatar">${acc.avatar ? `<img alt="" src="${escapeHTML(acc.avatar)}">` : escapeHTML((acc.name||"NA").slice(0,2).toUpperCase())}</div>
+            <div class="account-meta">
+              <strong>${escapeHTML(acc.name)}</strong>
+              <span>@${escapeHTML(acc.handle)} · ${acc.followers?.length || 0} followers</span>
+            </div>
+          `;
+          const btn = document.createElement("button");
+          btn.className = "tiny-btn";
+          if (isFriend) {
+            btn.classList.add("primary");
+            btn.textContent = "Friends";
+            btn.disabled = true;
+          } else if (recv) {
+            btn.classList.add("primary");
+            btn.textContent = "Accept";
+            btn.addEventListener("click", () => acceptFriend(acc.id));
+          } else if (sent) {
+            btn.textContent = "Pending";
+            btn.disabled = true;
+          } else {
+            btn.textContent = "Add friend";
+            btn.addEventListener("click", () => toggleFollow(acc.id));
+          }
+          item.appendChild(btn);
+          followList.appendChild(item);
+        });
+      }
+      if (followCount) followCount.textContent = `${me?.friends?.length || 0} friends`;
+    }
+
+    function acceptFriend(targetId) {
+      const me = getActiveAccount();
+      const target = getAccount(targetId);
+      if (!me || !target) return;
+      me.pendingReceived = (me.pendingReceived || []).filter(id => id !== target.id);
+      me.pendingSent = (me.pendingSent || []).filter(id => id !== target.id);
+      target.pendingReceived = (target.pendingReceived || []).filter(id => id !== me.id);
+      target.pendingSent = (target.pendingSent || []).filter(id => id !== me.id);
+      me.friends = Array.from(new Set([...(me.friends || []), target.id]));
+      target.friends = Array.from(new Set([...(target.friends || []), me.id]));
+      saveJSON("gx_accounts", accounts);
+      renderFollows();
+      refreshFriendSelect();
+      renderChat();
+    }
+
+    function timeAgo(ts) {
+      const diff = Math.max(0, Date.now() - ts);
+      const min = Math.floor(diff / 60000);
+      if (min < 1) return "now";
+      if (min < 60) return `${min}m ago`;
+      const hr = Math.floor(min / 60);
+      if (hr < 24) return `${hr}h ago`;
+      const d = Math.floor(hr / 24);
+      return `${d}d ago`;
+    }
+
+    function renderChat() {
+      if (!chatLog) return;
+      chatLog.innerHTML = "";
+      const me = getActiveAccount();
+      const friendId = chatFriend ? chatFriend.value : "";
+      chatMessages.slice(-40).filter(msg => {
+        if(!friendId) return false;
+        const isMine = msg.userId === me?.id && msg.toId === friendId;
+        const isTheirs = msg.userId === friendId && msg.toId === me?.id;
+        return isMine || isTheirs;
+      }).forEach(msg => {
+        const acc = getAccount(msg.userId) || { name:"Guest", handle:"guest", status:"offline" };
+        const item = document.createElement("div");
+        item.className = "chat-item";
+        item.innerHTML = `
+          <div class="status-dot ${statusClass(acc.status)}"></div>
+          <div class="account-meta" style="flex:1;">
+            <div class="chat-meta">
+              <strong>${escapeHTML(acc.name)}</strong>
+              <span>@${escapeHTML(acc.handle)}</span>
+              <span>${timeAgo(msg.ts)}</span>
+            </div>
+            <div class="chat-text">${escapeHTML(msg.text)}</div>
+          </div>
+        `;
+        chatLog.appendChild(item);
+      });
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function sendRenderEvent(type, payload) {
+      if (!renderBase) return;
+      try {
+        fetch(renderBase + "/api/events", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type, payload }),
+        }).catch(()=>{});
+      } catch (e) {}
+    }
+
+    function addChatMessage(text) {
+      const me = getActiveAccount();
+      const targetId = chatFriend ? chatFriend.value : "";
+      if (!targetId || !(me?.friends || []).includes(targetId)) {
+        alert("Select a friend before chatting.");
+        return;
+      }
+      const msg = {
+        id: "m_" + Math.random().toString(16).slice(2),
+        userId: me?.id || "u_guest",
+        toId: targetId,
+        text: text.trim(),
+        ts: Date.now(),
+      };
+      chatMessages.push(msg);
+      saveJSON("gx_chat", chatMessages);
+      renderChat();
+      sendRenderEvent("chat", { user: me?.handle || "guest", text: msg.text, ts: msg.ts, to: targetId });
+    }
+
+    function renderSocial() {
+      renderAccounts();
+      renderFollows();
+      renderPresence();
+      renderChat();
+      refreshFriendSelect();
+    }
+
+    function createAlbumFromForm() {
+      if (!albumForm) return;
+      const album = (albumNameInput.value || "").trim();
+      const artist = (albumArtistInput.value || "").trim();
+      const trackTitle = (albumTrackInput.value || "").trim();
+      if (!album || !artist || !trackTitle) {
+        alert("Fill album, artist, and track.");
+        return;
+      }
+      const art = (albumArtInput.value || "").trim() || `https://via.placeholder.com/300/0f172a/38bdf8?text=${encodeURIComponent(album.slice(0,8) || "AL")}`;
+      const card = cardFromTrack({
+        title: trackTitle,
+        artist,
+        album,
+        art,
+        previewUrl: "",
+        itunesUrl: "",
+      });
+      if (resultsEl) resultsEl.prepend(card);
+      sendRenderEvent("album", { album, artist, track: trackTitle });
+      albumForm.reset();
+    }
+
+    function refreshFriendSelect() {
+      if (!chatFriend) return;
+      const me = getActiveAccount();
+      const opts = (me?.friends || []).map(id => {
+        const acc = getAccount(id);
+        return acc ? `<option value="${acc.id}">${escapeHTML(acc.name)} (@${escapeHTML(acc.handle)})</option>` : "";
+      }).join("");
+      chatFriend.innerHTML = `<option value="">Select a friend to chat</option>${opts}`;
+    }
+    audio.addEventListener("ended", () => {
+      if (currentBtn) setBtnState(currentBtn, false);
+      currentBtn = null;
+    });
+    audio.addEventListener("pause", () => {
+      if (currentBtn) setBtnState(currentBtn, false);
+    });
+
+    function cardFromTrack(track) {
+      const card = document.createElement("div");
+      card.className = "music-card";
+      card.innerHTML = `
+        <div class="music-card-header">
+          <div class="music-thumb">${track.art ? `<img alt="" src="${escapeHTML(track.art)}">` : initials(track.title)}</div>
+          <div class="music-meta">
+            <div class="music-title">${escapeHTML(track.title)}</div>
+            <div class="music-artist">${escapeHTML(track.artist)}${track.album ? " · " + escapeHTML(track.album) : ""}</div>
+          </div>
+        </div>
+        <div class="music-actions">
+          <button class="music-btn primary" data-role="preview">Play preview</button>
+          ${track.itunesUrl ? `<a class="music-btn" href="${escapeHTML(track.itunesUrl)}" target="_blank" rel="noopener">Open in iTunes</a>` : ""}
+        </div>
+      `;
+      const previewBtn = card.querySelector('[data-role="preview"]');
+      bindPreview(previewBtn, track);
+      return card;
+    }
+
+    function statusClass(status) {
+      if (status === "online") return "status-online";
+      if (status === "dnd") return "status-dnd";
+      return "status-offline";
+    }
+
+    function normalizeAccounts(list) {
+      return (Array.isArray(list) ? list : []).map(acc => ({
+        id: acc.id || "u_" + Math.random().toString(16).slice(2),
+        name: acc.name || "User",
+        handle: (acc.handle || "user").replace(/[^a-zA-Z0-9_]/g, "").toLowerCase() || "user",
+        status: acc.status || "offline",
+        following: Array.from(new Set(acc.following || [])),
+        followers: Array.from(new Set(acc.followers || [])),
+        requiresCode: !!acc.requiresCode,
+        owner: !!acc.owner,
+        avatar: acc.avatar || "",
+        friends: Array.from(new Set(acc.friends || [])),
+        pendingSent: Array.from(new Set(acc.pendingSent || [])),
+        pendingReceived: Array.from(new Set(acc.pendingReceived || [])),
+      }));
+    }
+
+    function getAccount(id) {
+      return accounts.find(a => a.id === id);
+    }
+
+    function getActiveAccount() {
+      let acc = getAccount(activeAccountId);
+      if (!acc && accounts.length) {
+        acc = accounts[0];
+        activeAccountId = acc.id;
+      }
+      return acc;
+    }
+
+    async function fetchItunes(term, limit = 6) {
+      const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=musicTrack&limit=${limit}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Search failed");
+      const data = await res.json();
+      const results = Array.isArray(data.results) ? data.results : [];
+      return results
+        .map((r) => ({
+          title: r.trackName || r.collectionName || term,
+          artist: r.artistName || "Unknown artist",
+          album: r.collectionName || "",
+          art: r.artworkUrl100 || r.artworkUrl60 || "",
+          previewUrl: r.previewUrl || "",
+          itunesUrl: r.trackViewUrl || r.collectionViewUrl || "",
+        }))
+        .filter((r) => r.title);
+    }
+
+    async function loadMonthly() {
+      if (!monthlyEl) return;
+      monthlyEl.innerHTML = "";
+      const tracks = await Promise.all(
+        MONTHLY_PICKS.map(async (pick) => {
+          try {
+            const hits = await fetchItunes(`${pick.title} ${pick.artist || ""}`, 1);
+            if (hits.length) return hits[0];
+          } catch (e) {
+            console.warn("Monthly lookup failed", e);
+          }
+          return {
+            title: pick.title,
+            artist: pick.artist || "Unknown artist",
+            album: "Monthly pick",
+            art: "",
+            previewUrl: "",
+            itunesUrl: "",
+          };
+        })
+      );
+      tracks.forEach((t) => monthlyEl.appendChild(cardFromTrack(t)));
+    }
+
+    async function runSearch() {
+      if (!resultsEl || !searchInput || !emptyEl) return;
+      const term = (searchInput.value || "").trim();
+      if (!term) return;
+      resultsEl.innerHTML = "";
+      emptyEl.style.display = "none";
+      try {
+        const hits = await fetchItunes(term, 9);
+        if (!hits.length) {
+          emptyEl.textContent = "No songs found. Try another search.";
+          emptyEl.style.display = "block";
+          return;
+        }
+        hits.forEach((t) => resultsEl.appendChild(cardFromTrack(t)));
+      } catch (e) {
+        console.error(e);
+        emptyEl.textContent = "Search failed. Check your connection and try again.";
+        emptyEl.style.display = "block";
+      }
+    }
+
+    function init() {
+      if (refreshBtn) refreshBtn.addEventListener("click", loadMonthly);
+      if (searchBtn) searchBtn.addEventListener("click", runSearch);
+      if (searchInput) {
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") runSearch();
+        });
+      }
+      loadMonthly();
+
+      if (chatForm) {
+        chatForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const text = (chatInput.value || "").trim();
+          if (!text) return;
+          addChatMessage(text);
+          chatInput.value = "";
+        });
+        chatInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            chatForm.requestSubmit();
+          }
+        });
+      }
+
+      if (loginForm) {
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const handle = (loginHandle.value || "").trim().toLowerCase();
+          const pwd = (loginPassword.value || "").trim();
+          const acc = accounts.find(a => a.handle === handle);
+          if (!acc) {
+            alert("No account with that handle.");
+            return;
+          }
+          const stored = accountPasswords[handle];
+          if (stored && stored !== pwd) {
+            alert("Wrong password.");
+            return;
+          }
+          if (acc.requiresCode && !ownerUnlocked) {
+            const code = prompt("Owner code required to switch:");
+            if (code !== ownerCode) {
+              alert("Wrong code.");
+              return;
+            }
+            ownerUnlocked = true;
+            saveJSON("gx_owner_unlocked", true);
+          }
+          activeAccountId = acc.id;
+          saveJSON("gx_active_account", activeAccountId);
+          renderSocial();
+          refreshFriendSelect();
+          renderChat();
+          loginForm.reset();
+          alert(`Logged in as ${acc.name}`);
+        });
+      }
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          activeAccountId = accounts[0]?.id || null;
+          saveJSON("gx_active_account", activeAccountId);
+          renderSocial();
+          refreshFriendSelect();
+          renderChat();
+        });
+      }
+
+      if (profileForm) {
+        profileForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const me = getActiveAccount();
+          if (!me) return;
+          me.name = (profileName.value || me.name).trim();
+          me.avatar = (profileAvatar.value || "").trim();
+          me.status = profileStatus.value || me.status;
+          saveJSON("gx_accounts", accounts);
+          renderSocial();
+          refreshFriendSelect();
+          alert("Profile updated.");
+        });
+      }
+
+      if (albumForm) {
+        albumForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          createAlbumFromForm();
+        });
+      }
+
+      renderSocial();
+      refreshFriendSelect();
+    }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Backend API wiring -->
+<script>
+  (function() {
+    const API_BASE = "https://galaxymath67.onrender.com";
+    const tokenKey = "gx_token_api";
+
+    function resetEl(el) {
+      if (!el) return el;
+      const clone = el.cloneNode(true);
+      el.replaceWith(clone);
+      return clone;
+    }
+
+    let loginForm = resetEl(document.getElementById("authLoginForm"));
+    let signupForm = resetEl(document.getElementById("authSignupForm"));
+    let profileForm = resetEl(document.getElementById("authProfileForm"));
+    let logoutBtn = resetEl(document.getElementById("authLogoutBtn"));
+    let chatForm = resetEl(document.getElementById("chatForm"));
+
+    const loginHandle = document.getElementById("authLoginHandle");
+    const loginPassword = document.getElementById("authLoginPassword");
+    const loginStatus = document.getElementById("authLoginStatus");
+    const signupHandle = document.getElementById("authSignupHandle");
+    const signupPassword = document.getElementById("authSignupPassword");
+    const signupAvatar = document.getElementById("authSignupAvatar");
+    const signupStatus = document.getElementById("authSignupStatus");
+    const profileAvatar = document.getElementById("authProfileAvatar");
+    const profileStatusMsg = document.getElementById("authProfileStatus");
+
+    const accountStatusDot = document.getElementById("accountStatusDot");
+    const accountAvatarPreview = document.getElementById("accountAvatarPreview");
+    const accountNameLabel = document.getElementById("accountNameLabel");
+    const accountHandleLabel = document.getElementById("accountHandleLabel");
+
+    const chatInput = document.getElementById("chatInput");
+    const chatLog = document.getElementById("chatSection");
+
+    function setMsg(el, msg, ok = false) {
+      if (!el) return;
+      el.textContent = msg || "";
+      el.style.color = ok ? "var(--accent)" : "var(--text-muted)";
+    }
+
+    function getToken() { return localStorage.getItem(tokenKey) || ""; }
+    function setToken(t) { t ? localStorage.setItem(tokenKey, t) : localStorage.removeItem(tokenKey); }
+
+    async function api(path, opts = {}) {
+      const headers = { "Content-Type": "application/json", ...(opts.headers || {}) };
+      const token = getToken();
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const res = await fetch(`${API_BASE}${path}`, { ...opts, headers });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || res.statusText);
+      return data;
+    }
+
+    async function fetchMe() {
+      if (!getToken()) return null;
+      try { return await api("/api/me"); }
+      catch { setToken(""); return null; }
+    }
+
+    function renderProfile(user) {
+      const u = user || {};
+      if (accountStatusDot) accountStatusDot.className = `status-dot ${getToken() ? "status-online" : "status-offline"}`;
+      if (accountNameLabel) accountNameLabel.textContent = u.username || "—";
+      if (accountHandleLabel) accountHandleLabel.textContent = u.username ? "@" + u.username : "@—";
+      if (accountAvatarPreview) accountAvatarPreview.innerHTML = u.avatar ? `<img alt="" src="${u.avatar}">` : "";
+    }
+
+    loginForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        const username = (loginHandle?.value || "").trim();
+        const password = (loginPassword?.value || "").trim();
+        const { token, user } = await api("/api/login", { method: "POST", body: JSON.stringify({ username, password }) });
+        setToken(token); renderProfile(user);
+        setMsg(loginStatus, `Logged in as ${user.username}`, true); setMsg(signupStatus, "");
+      } catch (err) { setMsg(loginStatus, err.message || "Login failed"); }
+    });
+
+    signupForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        const username = (signupHandle?.value || "").trim();
+        const password = (signupPassword?.value || "").trim();
+        const avatar = (signupAvatar?.value || "").trim();
+        const { token, user } = await api("/api/signup", { method: "POST", body: JSON.stringify({ username, password, avatar }) });
+        setToken(token); renderProfile(user);
+        setMsg(signupStatus, `Account created for ${user.username}`, true); setMsg(loginStatus, "");
+        signupForm.reset();
+      } catch (err) { setMsg(signupStatus, err.message || "Signup failed"); }
+    });
+
+    profileForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      try {
+        const avatar = (profileAvatar?.value || "").trim();
+        const user = await api("/api/me", { method: "PUT", body: JSON.stringify({ avatar }) });
+        renderProfile(user); setMsg(profileStatusMsg, "Profile updated.", true);
+      } catch (err) { setMsg(profileStatusMsg, err.message || "Update failed"); }
+    });
+
+    logoutBtn?.addEventListener("click", () => {
+      setToken(""); renderProfile(null); setMsg(loginStatus, "Logged out.");
+    });
+
+    async function loadMessages() {
+      if (!chatLog || !getToken()) return;
+      try {
+        const msgs = await api("/api/messages?room=global");
+        chatLog.innerHTML = "";
+        msgs.forEach((m) => {
+          const item = document.createElement("div");
+          item.className = "chat-item";
+          item.innerHTML = `
+            <div class="status-dot status-online"></div>
+            <div class="account-meta" style="flex:1;">
+              <div class="chat-meta">
+                <strong>${m.username || "User"}</strong>
+                <span>${new Date(m.created_at).toLocaleTimeString()}</span>
+              </div>
+              <div class="chat-text">${m.text}</div>
+            </div>
+          `;
+          chatLog.appendChild(item);
+        });
+        chatLog.scrollTop = chatLog.scrollHeight;
+      } catch (err) { console.error(err); }
+    }
+
+    chatForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!getToken()) return setMsg(loginStatus, "Login first");
+      const text = (chatInput?.value || "").trim();
+      if (!text) return;
+      try { await api("/api/messages", { method: "POST", body: JSON.stringify({ room: "global", text }) }); chatInput.value = ""; await loadMessages(); }
+      catch (err) { console.error(err); }
+    });
+
+    (async () => {
+      const user = await fetchMe();
+      renderProfile(user);
+      loadMessages();
+      setInterval(loadMessages, 5000);
+    })();
+  })();
+</script>
+
+  <script>
+  function updateSystemClock() {
+    const timeEl = document.getElementById('system-clock-time');
+    const dateEl = document.getElementById('system-clock-date');
+    if (!timeEl || !dateEl) return;
+
+    const now = new Date();
+
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+    timeEl.textContent = hours + ':' + minutes + ' ' + ampm;
+
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const year = now.getFullYear();
+    dateEl.textContent = month + '/' + day + '/' + year;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    updateSystemClock();
+    setInterval(updateSystemClock, 30000);
+  });
+</script>
+</body></html>
+</body>
+</html>
+
+
+
